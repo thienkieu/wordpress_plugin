@@ -17,7 +17,8 @@ use Elementor\Plugin as Plugin;
  */
 
 function dragon_install() {
-
+    include_once(plugin_dir_path( __FILE__ ).'/installer.php');
+    Dragon\Installer::create_tables();
 }
 
 register_activation_hook( __FILE__, 'dragon_install');
@@ -30,7 +31,10 @@ register_deactivation_hook( __FILE__, 'dragon_deactivation');
 function dragon_initPlugin()
 {
     include_once(plugin_dir_path( __FILE__ ).'/plugins/elementor/image.php');
+    include_once(plugin_dir_path( __FILE__ ).'/plugins/elementor/motel.php');
+
     Plugin::instance()->widgets_manager->register_widget_type( new Dragon\Plugins\Elementor\Responsive_Widget_Image() );   
+    Plugin::instance()->widgets_manager->register_widget_type( new Dragon\Plugins\Elementor\Widget_Motel() );   
 }
 
 add_action('init', 'dragon_initPlugin');
