@@ -739,8 +739,38 @@ class Responsive_Widget_Image extends Widget_Base {
 			if ( link_url ) {
 					#><a class="elementor-clickable" data-elementor-open-lightbox="{{ settings.open_lightbox }}" href="{{ link_url }}"><#
 			}
-						#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
+				if (settings.image_mobile && settings.image_tablet) {
+					var imageMobile = {
+						id: settings.image_mobile.id,
+						url: settings.image_mobile.url,
+						size: settings.image_mobile_size,
+						dimension: settings.image_mobile_custom_dimension,
+						model: view.getEditModel()
+					};
 
+					var image_mobile_url = elementor.imagesManager.getImageUrl( imageMobile );
+
+					var imageTablet = {
+						id: settings.image_tablet.id,
+						url: settings.image_tablet.url,
+						size: settings.image_tablet_size,
+						dimension: settings.image_tablet_custom_dimension,
+						model: view.getEditModel()
+					};
+
+					var image_tablet_url = elementor.imagesManager.getImageUrl( imageMobile );
+
+						#>
+						<picture>
+							<source media="(max-width: 768px)" srcset="{{ image_mobile_url }}">
+							<source media="(max-width: 1024px) and (min-width: 768px)" srcset="{{ image_tablet_url }}">
+							<source media="(min-width: 1025px)" srcset="{{ image_url }}">
+							<img src="{{ image_url }}" class="{{ imgClass }}" />
+						</picture>
+						<#
+				} else {
+					#><img src="{{ image_url }}" class="{{ imgClass }}" /><#
+				}
 			if ( link_url ) {
 					#></a><#
 			}
