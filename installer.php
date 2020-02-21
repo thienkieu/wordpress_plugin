@@ -29,16 +29,13 @@ class Installer {
             ID INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
             object_type VARCHAR(20) NOT NULL,
             object_id BIGINT(20) UNSIGNED NOT NULL default 0,
-            title VARCHAR( 200 ),
             phone VARCHAR( 50 ) NOT NULL,
-            latitude FLOAT( 10, 6 ) NOT NULL,
-            longitude FLOAT( 10, 6 ) NOT NULL,
+            latitude VARCHAR( 50 ) NOT NULL,
+            longitude VARCHAR( 50 ) NOT NULL,
             author VARCHAR( 100 ) NOT NULL,
             PRIMARY KEY ID (ID)
         ) $charset_collate;";
-
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
             // create database table.
             dbDelta( $sql );
         }
@@ -55,13 +52,13 @@ class Installer {
             // generate table sql.
             $sql = "CREATE TABLE $floors_table (
             ID INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT,
-            motel_id UNSIGNED NOT NULL,
-            status TINYINT NOT NULL default 1,
+            object_type VARCHAR(20) NOT NULL,
+            object_id BIGINT(20) UNSIGNED NOT NULL default 0,  
             title VARCHAR( 200 ),
             number_rooms TINYINT NOT NULL default 0,
             available_rooms TINYINT NOT NULL default 0,
             number_price INT(11) NOT NULL default 0,
-            PRIMARY KEY ID (ID),
+            PRIMARY KEY ID (ID)
         ) $charset_collate;";
 
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -70,5 +67,15 @@ class Installer {
             dbDelta( $sql );
         }
 
+    }
+
+    public static function delete_tables() {
+        global $wpdb;
+        // forms table name.
+        $motels_table = $wpdb->prefix . 'dragon_motels';
+        $wpdb->query("DROP TABLE IF EXISTS {$motels_table}");
+
+        $floors_table = $wpdb->base_prefix . 'dragon_floors';
+        $wpdb->query("DROP TABLE IF EXISTS {$floors_table}");        
     }
 }

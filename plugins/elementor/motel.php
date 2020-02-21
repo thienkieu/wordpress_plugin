@@ -244,3 +244,7 @@ class Widget_Motel extends Widget_Base {
 	}
 
 }
+
+
+include_once( __DIR__ .'/actions.php');
+\add_action( 'elementor/document/after_save', 'insertOrUpdateMotelInfo', 10, 2 );

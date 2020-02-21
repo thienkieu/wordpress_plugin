@@ -24,6 +24,8 @@ function dragon_install() {
 register_activation_hook( __FILE__, 'dragon_install');
 
 function dragon_deactivation() {
+    include_once(plugin_dir_path( __FILE__ ).'/installer.php');
+    Dragon\Installer::delete_tables();
 }
 
 register_deactivation_hook( __FILE__, 'dragon_deactivation');
