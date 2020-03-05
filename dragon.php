@@ -34,9 +34,11 @@ function dragon_initPlugin()
 {
     include_once(plugin_dir_path( __FILE__ ).'/plugins/elementor/image.php');
     include_once(plugin_dir_path( __FILE__ ).'/plugins/elementor/motel.php');
+    include_once(plugin_dir_path( __FILE__ ).'/plugins/elementor/google-maps.php');
 
     Plugin::instance()->widgets_manager->register_widget_type( new Dragon\Plugins\Elementor\Responsive_Widget_Image() );   
     Plugin::instance()->widgets_manager->register_widget_type( new Dragon\Plugins\Elementor\Widget_Motel() );   
+    Plugin::instance()->widgets_manager->register_widget_type( new Dragon\Plugins\Elementor\Widget_Custom_Google_Maps() );   
 }
 
 add_action('init', 'dragon_initPlugin');
