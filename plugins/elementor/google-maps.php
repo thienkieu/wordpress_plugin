@@ -29,7 +29,7 @@ class Widget_Custom_Google_Maps extends Widget_Base {
 	public function __construct($data = [], $args = null) {
 		parent::__construct($data, $args);
   
-		wp_register_script( 'custom-google-maps-handle', '/wp-content/plugins/dragon/assets/js/WidgetCustomGoogleMaps.js', [ 'elementor-frontend' ], '1.0.0', true );
+		wp_register_script( 'custom-google-maps-handle', '/wp-content/plugins/dragon/assets/js/WidgetCustomGoogleMaps.js', [ 'elementor-frontend' ], '1.0.0', true );		
 		wp_register_script( 'google-map-script', '//maps.googleapis.com/maps/api/js?key=AIzaSyBVSI5QWn2nFvM1cGgYhoJyVpMeKHGxVzg&callback=onGoogleMapInit', '', '1.0.0', true );
 	 }
   
@@ -182,6 +182,24 @@ class Widget_Custom_Google_Maps extends Widget_Base {
 		);
 
 		$this->add_control(
+			'location_latitude',
+			[
+				'label' => __( 'Latitude', 'elementor' ),
+				'type' => Controls_Manager::TEXT,				
+				'label_block' => false,
+			]
+        );
+
+        $this->add_control(
+			'location_longitude',
+			[
+				'label' => __( 'Longitude', 'elementor' ),
+				'type' => Controls_Manager::TEXT,				
+				'label_block' => false,
+			]
+		);
+		
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
@@ -294,5 +312,111 @@ class Widget_Custom_Google_Maps extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _content_template() {}
+	protected function _content_template() {
+		?>
+		<#
+		function addHeaderBehavior(behaviors) {
+    abc = function () {
+        class CustomeFilter extends Marionette.Behavior  {
+            editing = false;
+        
+            $currentEditingArea = null;
+        
+            ui() {
+                return {
+                    inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' ),
+                };
+            };
+        
+            events() {
+                return {
+                    'click @ui.inlineEditingArea': 'onInlineEditingClick',
+                    'input @ui.inlineEditingArea': 'onInlineEditingUpdate',
+                };
+            };
+        
+            initialize() {
+				this.onInlineEditingBlur = this.onInlineEditingBlur.bind( this );
+            };
+        
+            getEditingSettingKey() {
+                return this.$currentEditingArea.data().elementorSettingKey;
+            };
+        
+            
+        
+            onInlineEditingClick( event ) {
+                var self = this,
+                    $targetElement = jQuery( event.currentTarget );
+        
+                /**
+                 * When starting inline editing we need to set timeout, this allows other inline items to finish
+                 * their operations before focusing new editing area.
+                 */
+                setTimeout( function() {
+                    self.startEditing( $targetElement );
+                }, 30 );
+            };
+        
+            onInlineEditingBlur( event ) {
+                if ( 'mousedown' === event.type ) {
+                    this.stopEditing();
+        
+                    return;
+                }
+        
+                /**
+                 * When exiting inline editing we need to set timeout, to make sure there is no focus on internal
+                 * toolbar action. This prevent the blur and allows the user to continue the inline editing.
+                 */
+                setTimeout( () => {
+                    const selection = elementorFrontend.elements.window.getSelection(),
+                        $focusNode = jQuery( selection.focusNode );
+        
+                    if ( $focusNode.closest( '.pen-input-wrapper' ).length ) {
+                        return;
+                    }
+        
+                    this.stopEditing();
+                }, 20 );
+            };
+        
+            onInlineEditingUpdate() {
+                let key = this.getEditingSettingKey(),
+                    container = this.view.getContainer();
+        
+                const parts = key.split( '.' );
+        
+                // Is it repeater?
+                if ( 3 === parts.length ) {
+                    container = container.children[ parts[ 1 ] ];
+                    key = parts[ 2 ];
+                }
+        
+                $e.run( 'document/elements/settings', {
+                    container,
+                    settings: {
+                        [ key ]: this.editor.getContent(),
+                    },
+                    options: {
+                        external: true,
+                    },
+                } );
+            };
+        }
+        console.log('sdfsdfsdfsd');
+        return CustomeFilter;
+    }
+
+    behaviors.kit = {
+        behaviorClass: this.abc(),
+    };
+
+    return behaviors;
+}
+
+		elementor.hooks.addFilter( 'elements/widget/behaviors', addHeaderBehavior ); 
+		#>
+		<?php
+	}
 }
